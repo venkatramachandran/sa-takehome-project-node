@@ -7,7 +7,32 @@
   </div>
   <div class="mt-40 text-center">
     <div class="mt-20 text-center text-secondary border-placeholder">
-      Add details about the payment here!
+      Total Charged Amount:
+    </div>
+    <span id="amount" class="amount"></span>
+  </div>
+    <div class="mt-40 text-center">
+    <div class="mt-20 text-center text-secondary border-placeholder">
+      Payment Reference: 
+    </div>
+    <div id="payment_intent_id" class="mt-20 text-center text-secondary border-placeholder">
     </div>
   </div>
+  <div id="error" class="mt-20 text-center text-secondary">
+  </div>
 </main>
+<script>
+  const clientSecret = new URLSearchParams(window.location.search).get(
+    'payment_intent_client_secret'
+  );
+  stripe.retrievePaymentIntent(clientSecret).then(({paymentIntent}) => {
+    const amountField = document.querySelector('#amount');
+    const payment_intent_id = document.querySelector('#payment_intent_id');
+    amountField.innerText = paymentIntent.amount / 100;
+    amountField.setAttribute("data-amount", paymentIntent.amount);
+    payment_intent_id.innerText = paymentIntent.id;
+  }).catch(({error}) => {
+    const errorField = document.querySelector('#error');
+    errorField.innerHTML = error.message;
+  });
+</script>

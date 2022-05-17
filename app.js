@@ -2,7 +2,7 @@ const express = require('express');
 const path = require('path');
 const exphbs = require('express-handlebars');
 require('dotenv').config();
-const stripe = require('stripe');
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
 var app = express();
 
@@ -26,7 +26,7 @@ app.get('/', function(req, res) {
 /**
  * Checkout route
  */
-app.get('/checkout', function(req, res) {
+app.get('/checkout', async function(req, res) {
   // Just hardcoding amounts here to avoid using a database
   const item = req.query.item;
   let title, amount, error;
@@ -50,10 +50,18 @@ app.get('/checkout', function(req, res) {
       break;
   }
 
+  // create payment intent here
+  const paymentIntent = await stripe.paymentIntents.create({
+    amount: amount,
+    currency: 'usd',
+    automatic_payment_methods: {enabled: true},
+  });
+  // handle errors from payment intent creation
   res.render('checkout', {
     title: title,
     amount: amount,
-    error: error
+    error: error,
+    client_secret: paymentIntent.client_secret
   });
 });
 
@@ -61,7 +69,12 @@ app.get('/checkout', function(req, res) {
  * Success route
  */
 app.get('/success', function(req, res) {
-  res.render('success');
+  const amount = req.query.amount;
+  const payment_intent_id = req.query.id;
+  res.render('success', {
+    amount: amount,
+    payment_intent_id: payment_intent_id
+  });
 });
 
 /**

@@ -12,3 +12,6 @@ $(document).ready(function() {
   }
 })
 
+// TODO : move this to .env
+const stripe = Stripe('pk_test_51L0PKxHYToU9wnfh2xcuLiWVWWajNUeS7aGbY8cWeaZhcnRAsSJxpsSemDkNkTTmAiWQFtBnjqPXJxKZiHdXDpgt00iIoYoHIW');
+
