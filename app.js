@@ -15,6 +15,7 @@ app.set('view engine', 'hbs');
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.urlencoded({ extended: true }))
 app.use(express.json({}));
+app.locals.stripePublishableKey = process.env.STRIPE_PUBLISHABLE_KEY;
 
 /**
  * Home route
@@ -56,12 +57,14 @@ app.get('/checkout', async function(req, res) {
     currency: 'usd',
     automatic_payment_methods: {enabled: true},
   });
+  const returnUrl = getReturnUrl(req);
   // handle errors from payment intent creation
   res.render('checkout', {
     title: title,
     amount: amount,
     error: error,
-    client_secret: paymentIntent.client_secret
+    client_secret: paymentIntent.client_secret,
+    returnUrl: returnUrl
   });
 });
 
@@ -83,3 +86,15 @@ app.get('/success', function(req, res) {
 app.listen(3000, () => {
   console.log('Getting served on port 3000');
 });
+
+
+function getReturnUrl(req) {
+  let protocol = req.get('X-Forwarded-Proto') || req.protocol;
+  let host = req.get('X-Forwarded-Host') || req.get('Host');
+  let port = req.get('X-Forwarded-Port') || req.get('Server-Port');
+  let url = `${protocol}://${host}`;
+  if (port) {
+    url += `:${port}`;
+  }
+  return `${url}/success`;
+}
