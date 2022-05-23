@@ -18,3 +18,4 @@ Currently the application happens to serve both static and dynamic content. Ther
 
 To overcome this limitation, a better way is to separate the API and the static content. This enables separation of concerns and allows for client development (like mobile etc) separate to the API development. This also allows the API and static content serving to be scaled and deployed differently.
 
+Other regular considerations like authentication, allowing users to add multiple items to a cart and purchasing all at once, etc. could be added to the API.
