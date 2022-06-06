@@ -80,6 +80,23 @@ app.get('/success', function(req, res) {
   });
 });
 
+app.get('/payments', async function(req ,res) {
+  const paymentIntents = await stripe.paymentIntents.list({
+    limit: 100
+  });
+  const filteredPayments = paymentIntents.data.filter(f => f.status === 'succeeded');
+  const wateredDownPayments = filteredPayments.map(f => ({
+    id: f.id,
+    amount: f.amount/100,
+    date: f.created,
+    currency: f.currency,
+    status: f.status
+  }));
+  res.render('paymentIntents', {
+    data: wateredDownPayments,
+    errorMessage: errorMessage
+  });
+});
 /**
  * Start server
  */

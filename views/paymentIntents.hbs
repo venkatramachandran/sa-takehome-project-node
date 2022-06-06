@@ -1,0 +1,31 @@
+<! -- 
+Display the list the successful paymentIntents and display the id, amount, currency, date, status
+-->
+<table>
+    <thead>
+        <tr>
+            <th colspan="4">Successful Payments</th>
+        </tr>
+    </thead>
+    <tbody>
+        <th>
+            <td>ID</td>
+            <td>amount</td>
+            <td>currency</td>
+            <td>date</td>
+            <td>status</td>
+        </th>
+        {{#each data}}
+        <tr>
+            <td>{{id}}</td>
+            <td>{{amount}}</td>
+            <td>{{currency}}</td>
+            <td>{{created}}</td>
+            <td>{{status}}</td>
+        </tr>
+        {{/each}}
+    </tbody>
+</table>
+{#if errorMessage}
+  Error while fething payments: {{errorMessage}}
+{/#if}
